@@ -21,7 +21,7 @@ func SendMessage(url string, message Message) error {
 		return err
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != 200 || resp.StatusCode != 204 {
 		defer resp.Body.Close()
 
 		responseBody, err := ioutil.ReadAll(resp.Body)
