@@ -17,6 +17,7 @@ type Embed struct {
 	Thumbnail   *Thumbnail `json:"thumbnail,omitempty"`
 	Image       *Image     `json:"image,omitempty"`
 	Footer      *Footer    `json:"footer,omitempty"`
+	Timestamp   *string    `json:"timestamp,omitempty"`
 }
 
 type Author struct {
