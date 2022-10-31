@@ -1,10 +1,11 @@
 package discordwebhook
 
 type Message struct {
-	Username  *string  `json:"username,omitempty"`
-	AvatarUrl *string  `json:"avatar_url,omitempty"`
-	Content   *string  `json:"content,omitempty"`
-	Embeds    *[]Embed `json:"embeds,omitempty"`
+	Username        *string          `json:"username,omitempty"`
+	AvatarUrl       *string          `json:"avatar_url,omitempty"`
+	Content         *string          `json:"content,omitempty"`
+	Embeds          *[]Embed         `json:"embeds,omitempty"`
+	AllowedMentions *AllowedMentions `json:"allowed_mentions,omitempty`
 }
 
 type Embed struct {
@@ -42,4 +43,10 @@ type Image struct {
 type Footer struct {
 	Text    *string `json:"text,omitempty"`
 	IconUrl *string `json:"icon_url,omitempty"`
+}
+
+type AllowedMentions struct {
+	Parse *[]string `json:"parse,omitempty"`
+	Users *[]string `json:"users,omitempty"`
+	Roles *[]string `json:"roles,omitempty"`
 }
