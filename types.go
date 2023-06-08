@@ -5,7 +5,7 @@ type Message struct {
 	AvatarUrl       *string          `json:"avatar_url,omitempty"`
 	Content         *string          `json:"content,omitempty"`
 	Embeds          *[]Embed         `json:"embeds,omitempty"`
-	AllowedMentions *AllowedMentions `json:"allowed_mentions,omitempty`
+	AllowedMentions *AllowedMentions `json:"allowed_mentions,omitempty"`
 }
 
 type Embed struct {
