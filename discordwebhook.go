@@ -13,14 +13,13 @@ import (
 	"time"
 )
 
-func SendMessage(url string, message Message, r1 *RateLimiter) error {
+func SendMessage(url string, message Message) error {
 	// Validate parameters
 	if url == "" {
 		return errors.New("empty URL")
 	}
 
 	for {
-		bucket := r1.LockBucket(url)
 		payload := new(bytes.Buffer)
 
 		err := json.NewEncoder(payload).Encode(message)
@@ -43,7 +42,6 @@ func SendMessage(url string, message Message, r1 *RateLimiter) error {
 		case http.StatusOK, http.StatusNoContent:
 			// Success
 			resp.Body.Close()
-			err = bucket.Release(resp.Header)
 			return nil
 		case http.StatusTooManyRequests:
 			// Rate limit exceeded, retry after backoff duration
@@ -58,7 +56,6 @@ func SendMessage(url string, message Message, r1 *RateLimiter) error {
 
 			time.Sleep(time.Until(resetAt))
 
-			err = bucket.Release(resp.Header)
 		default:
 			// Handle other HTTP status codes
 			defer resp.Body.Close()
@@ -67,7 +64,6 @@ func SendMessage(url string, message Message, r1 *RateLimiter) error {
 				return err
 			}
 
-			err = bucket.Release(resp.Header)
 			return fmt.Errorf("HTTP request failed with status %d, body: \n %s", resp.StatusCode, responseBody)
 		}
 	}

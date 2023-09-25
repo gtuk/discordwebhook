@@ -11,7 +11,6 @@ func main() {
 	var content = "This is a test message"
 	var url = "https://discord.com/api/webhooks/..."
 	var image_url = "https://i.imgur.com/..."
-	r1 := discordwebhook.NewRatelimiter()
 
 	image := discordwebhook.Image{
 		Url: &image_url,
@@ -27,7 +26,7 @@ func main() {
 		Embeds:   &[]discordwebhook.Embed{embed},
 	}
 
-	err := discordwebhook.SendMessage(url, message, r1)
+	err := discordwebhook.SendMessage(url, message)
 	if err != nil {
 		log.Fatal(err)
 	}
