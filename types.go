@@ -1,11 +1,14 @@
 package discordwebhook
 
+import "time"
+
 type Message struct {
 	Username        *string          `json:"username,omitempty"`
 	AvatarUrl       *string          `json:"avatar_url,omitempty"`
 	Content         *string          `json:"content,omitempty"`
 	Embeds          *[]Embed         `json:"embeds,omitempty"`
 	AllowedMentions *AllowedMentions `json:"allowed_mentions,omitempty"`
+	Timestamp       *time.Time       `json:"timestamp,omitempty"`
 }
 
 type Embed struct {
