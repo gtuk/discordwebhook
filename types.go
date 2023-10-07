@@ -8,7 +8,6 @@ type Message struct {
 	Content         *string          `json:"content,omitempty"`
 	Embeds          *[]Embed         `json:"embeds,omitempty"`
 	AllowedMentions *AllowedMentions `json:"allowed_mentions,omitempty"`
-	Timestamp       *time.Time       `json:"timestamp,omitempty"`
 }
 
 type Embed struct {
@@ -21,6 +20,7 @@ type Embed struct {
 	Thumbnail   *Thumbnail `json:"thumbnail,omitempty"`
 	Image       *Image     `json:"image,omitempty"`
 	Footer      *Footer    `json:"footer,omitempty"`
+	Timestamp   *time.Time `json:"timestamp,omitempty"`
 }
 
 type Author struct {
