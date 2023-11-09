@@ -31,9 +31,6 @@ func SendMessage(url string, message Message) error {
 		resp, err := http.Post(url, "application/json", payload)
 
 		if err != nil {
-			return err
-		}
-		if err != nil {
 			log.Printf("HTTP request failed: %v", err)
 			return err
 		}
@@ -51,14 +48,18 @@ func SendMessage(url string, message Message) error {
 				return err
 			}
 
+			/*
+				Calculate the time until reset and add it to the current local time.
+				Some extra time of 250ms is added because without it I still encountered 429s.
+			*/
 			whole, frac := math.Modf(parsedAfter)
 			resetAt := time.Now().Add(time.Duration(whole) * time.Second).Add(time.Duration(frac*1000) * time.Millisecond).Add(250 * time.Millisecond)
 
 			time.Sleep(time.Until(resetAt))
-
+			resp.Body.Close()
 		default:
 			// Handle other HTTP status codes
-			defer resp.Body.Close()
+			resp.Body.Close()
 			responseBody, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				return err
