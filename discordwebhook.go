@@ -13,7 +13,12 @@ import (
 	"time"
 )
 
-func SendMessage(url string, message Message) error {
+/*
+SendMessageRateLimitAware is designed for scenarios where there is a need to dispatch numerous webhooks in rapid succession.
+Its purpose is to prevent potential bans from Discord by ensuring that the requests are rate-limited,
+thus maintaining a responsible and compliant approach to webhook communication.
+*/
+func SendMessageRateLimitAware(url string, message Message) error {
 	// Validate parameters
 	if url == "" {
 		return errors.New("empty URL")
@@ -68,4 +73,31 @@ func SendMessage(url string, message Message) error {
 			return fmt.Errorf("HTTP request failed with status %d, body: \n %s", resp.StatusCode, responseBody)
 		}
 	}
+}
+
+func SendMessage(url string, message Message) error {
+	payload := new(bytes.Buffer)
+
+	err := json.NewEncoder(payload).Encode(message)
+	if err != nil {
+		return err
+	}
+
+	resp, err := http.Post(url, "application/json", payload)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != 200 && resp.StatusCode != 204 {
+		defer resp.Body.Close()
+
+		responseBody, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+
+		return fmt.Errorf(string(responseBody))
+	}
+
+	return nil
 }
