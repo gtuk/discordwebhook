@@ -32,9 +32,6 @@ func SendMessage(url string, message Message, r1 *RateLimiter) error {
 		resp, err := http.Post(url, "application/json", payload)
 
 		if err != nil {
-			return err
-		}
-		if err != nil {
 			log.Printf("HTTP request failed: %v", err)
 			return err
 		}
