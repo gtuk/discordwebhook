@@ -9,7 +9,7 @@ import (
 func main() {
 	var username = "BotUser"
 	var content = "This is a test message"
-	var url = "https://discord.com/api/webhooks/1178791404290445363/af5LrdlRfzw_h80IEA7LAUfR6xvP3xGzD-Tw-jHiDmNuO7geESWjBIgyrC-pzVCJSxmA"
+	var url = ""
 
 	message := discordwebhook.Message{
 		Username: &username,
