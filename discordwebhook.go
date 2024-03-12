@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -43,28 +43,47 @@ func SendMessageRateLimitAware(url string, message Message) error {
 		switch resp.StatusCode {
 		case http.StatusOK, http.StatusNoContent:
 			// Success
-			resp.Body.Close()
+			err := resp.Body.Close()
+			if err != nil {
+				return err
+			}
 			return nil
 		case http.StatusTooManyRequests:
 			// Rate limit exceeded, retry after backoff duration
-			resetAfter := resp.Header.Get("X-RateLimit-Reset-After")
-			parsedAfter, err := strconv.ParseFloat(resetAfter, 64)
+			var response DiscordResponse
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return err
+			}
+			err = json.Unmarshal(body, &response)
 			if err != nil {
 				return err
 			}
 
 			/*
 				Calculate the time until reset and add it to the current local time.
-				Some extra time of 250ms is added because without it I still encountered 429s.
+				Some extra time of 750ms is added because without it I still encountered 429s.
 			*/
-			whole, frac := math.Modf(parsedAfter)
-			resetAt := time.Now().Add(time.Duration(whole) * time.Second).Add(time.Duration(frac*1000) * time.Millisecond).Add(250 * time.Millisecond)
 
-			time.Sleep(time.Until(resetAt))
-			resp.Body.Close()
+			if response.RetryAfter != 0 {
+
+				whole, frac := math.Modf(response.RetryAfter)
+				resetAt := time.Now().Add(time.Duration(whole) * time.Second).Add(time.Duration(frac*1000) * time.Millisecond).Add(750 * time.Millisecond)
+				time.Sleep(time.Until(resetAt))
+			} else {
+				time.Sleep(5 * time.Second)
+			}
+
+			err = resp.Body.Close()
+			if err != nil {
+				return err
+			}
 		default:
 			// Handle other HTTP status codes
-			resp.Body.Close()
+			err := resp.Body.Close()
+			if err != nil {
+				return err
+			}
 			responseBody, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				return err
@@ -89,7 +108,12 @@ func SendMessage(url string, message Message) error {
 	}
 
 	if resp.StatusCode != 200 && resp.StatusCode != 204 {
-		defer resp.Body.Close()
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			if err != nil {
+
+			}
+		}(resp.Body)
 
 		responseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {

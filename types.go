@@ -53,3 +53,9 @@ type AllowedMentions struct {
 	Users *[]string `json:"users,omitempty"`
 	Roles *[]string `json:"roles,omitempty"`
 }
+
+type DiscordResponse struct {
+	Message    string  `json:"message"`
+	RetryAfter float64 `json:"retry_after"`
+	Global     bool    `json:"global"`
+}
