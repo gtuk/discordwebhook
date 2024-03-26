@@ -9,16 +9,17 @@ import (
 func main() {
 	var username = "BotUser"
 	var content = "This is a test message"
-	var url = "https://discord.com/api/webhooks/..."
+	var url = ""
 
 	message := discordwebhook.Message{
 		Username: &username,
 		Content:  &content,
 	}
+	for {
+		err := discordwebhook.SendMessageRateLimitAware(url, message)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	err := discordwebhook.SendMessage(url, message)
-	if err != nil {
-		log.Fatal(err)
 	}
 }
-

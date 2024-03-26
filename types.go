@@ -1,5 +1,7 @@
 package discordwebhook
 
+import "time"
+
 type Message struct {
 	Username        *string          `json:"username,omitempty"`
 	AvatarUrl       *string          `json:"avatar_url,omitempty"`
@@ -18,6 +20,7 @@ type Embed struct {
 	Thumbnail   *Thumbnail `json:"thumbnail,omitempty"`
 	Image       *Image     `json:"image,omitempty"`
 	Footer      *Footer    `json:"footer,omitempty"`
+	Timestamp   *time.Time `json:"timestamp,omitempty"`
 }
 
 type Author struct {
@@ -49,4 +52,10 @@ type AllowedMentions struct {
 	Parse *[]string `json:"parse,omitempty"`
 	Users *[]string `json:"users,omitempty"`
 	Roles *[]string `json:"roles,omitempty"`
+}
+
+type DiscordResponse struct {
+	Message    string  `json:"message"`
+	RetryAfter float64 `json:"retry_after"`
+	Global     bool    `json:"global"`
 }
